@@ -29,6 +29,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -64,28 +65,18 @@ public final class FsfApiService {
     }
 
     public List<FileMetadata> fetchOwnedFilesMetadata(String userId) {
-        List<FileMetadata> owned = new ArrayList<>();
-        FileMetadata fileMetadata1 = new FileMetadata();
-        fileMetadata1.setFileId("file id 1");
-        owned.add(fileMetadata1);
-        FileMetadata fileMetadata2 = new FileMetadata();
-        fileMetadata2.setFileId("file id 2");
-        owned.add(fileMetadata2);
-        FileMetadata fileMetadata3 = new FileMetadata();
-        fileMetadata3.setFileId("file id 3");
-        owned.add(fileMetadata3);
-        return owned;
+        List<FileMetadata> ownedFiles = fileMetadataRepository.findByOwner(userId);
+        ownedFiles.forEach(file -> file.setOwner(null));
+        return ownedFiles;
     }
 
     public List<FileMetadata> fetchSharedFilesMetadata(String userId) {
-        List<FileMetadata> shared = new ArrayList<>();
-        FileMetadata fileMetadata1 = new FileMetadata();
-        fileMetadata1.setFileId("file id 1");
-        shared.add(fileMetadata1);
-        FileMetadata fileMetadata2 = new FileMetadata();
-        fileMetadata2.setFileId("file id 2");
-        shared.add(fileMetadata2);
-        return shared;
+        List<FilePermission> sharedFilesPermissions = filePermissionRepository.findByAuthorizedReader(userId);
+        List<FileMetadata> sharedFiles = sharedFilesPermissions.stream()
+                .map(FilePermission::getFile)
+                .collect(Collectors.toList());
+        sharedFiles.forEach(file -> file.setOwner(null));
+        return sharedFiles;
     }
 
     public Resource findFile(String userId, String fileId) {

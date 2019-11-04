@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 
 @Slf4j
 @Data
@@ -28,14 +27,8 @@ public class FileMetadata extends BaseEntity implements Serializable {
     @Column(name = "ORIGINAL_FILE_NAME")
     private String originalFileName;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID", nullable = false)
     private User owner;
-
-/*    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "USER_SESSION", referencedColumnName = "id")
-    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<User> sharedAccess;*/
-
 
 }

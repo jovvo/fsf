@@ -25,7 +25,7 @@ public class FilePermission extends BaseEntity implements Serializable {
     @JoinColumn(name = "FILE_METADATA_ID", nullable = false)
     private FileMetadata file;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "USER_ID", nullable = false)
     private User authorizedReader;
 

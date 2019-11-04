@@ -57,7 +57,6 @@ public final class FsfApiController {
             response.setOwnedFiles(ownedFiles);
             response.setSharedFiles(sharedFiles);
 
-            response.setMessage("user_registration_success");
             return new ResponseEntity<FilesMetadataResponse>(response, HttpStatus.ACCEPTED);
         }
 

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 
 @Slf4j
@@ -26,7 +27,4 @@ public class User extends BaseEntity implements Serializable {
 
     @Column(name = "PASSWORD", nullable = false)
     private String password;
-
-/*    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private UserSession userSession;*/
 }
