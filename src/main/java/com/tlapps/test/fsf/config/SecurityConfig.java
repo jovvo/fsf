@@ -7,11 +7,20 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 @Configuration
-public class SecurityConfig extends WebSecurityConfigurerAdapter
-{
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private CustomAuthenticationProvider customAuthenticationProvider;
+
+    @Autowired
+    public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(customAuthenticationProvider);
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception
     {
+/*
         http
             .csrf().disable()
             .authorizeRequests()
@@ -19,9 +28,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .anyRequest().authenticated()
             .and()
             .httpBasic();
+
+*/
+
+        http.httpBasic().and().authorizeRequests()
+                .antMatchers("/fsf/register").permitAll().and()
+                .csrf().disable().headers().frameOptions().disable();
     }
 
-    @Autowired
+/*    @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth)
             throws Exception
     {
@@ -29,5 +44,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .withUser("admin")
                 .password("{noop}password")
                 .roles("USER");
-    }
+    }*/
 }

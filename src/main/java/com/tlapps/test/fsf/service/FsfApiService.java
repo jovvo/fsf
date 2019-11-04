@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -62,7 +63,7 @@ public final class FsfApiService {
         }
     }
 
-    public List<FileMetadata> fetchOwnedFilesMetadata(Long userId) {
+    public List<FileMetadata> fetchOwnedFilesMetadata(String userId) {
         List<FileMetadata> owned = new ArrayList<>();
         FileMetadata fileMetadata1 = new FileMetadata();
         fileMetadata1.setFileId("file id 1");
@@ -76,7 +77,7 @@ public final class FsfApiService {
         return owned;
     }
 
-    public List<FileMetadata> fetchSharedFilesMetadata(Long userId) {
+    public List<FileMetadata> fetchSharedFilesMetadata(String userId) {
         List<FileMetadata> shared = new ArrayList<>();
         FileMetadata fileMetadata1 = new FileMetadata();
         fileMetadata1.setFileId("file id 1");
@@ -87,8 +88,15 @@ public final class FsfApiService {
         return shared;
     }
 
-    public Resource findFile(Long userId, String fileId) {
-        log.info("fetching file with id + " + fileId);
+    public Resource findFile(String userId, String fileId) {
+
+        FilePermission readPermission = filePermissionRepository.findByAuthorizedReaderAndFile(userId, fileId);
+        FileMetadata file = fileMetadataRepository.findByFileId(fileId);
+
+        if (!file.getOwner().getEmail().equals(userId) && readPermission == null) {
+            throw new AuthorizationServiceException("tampering_error");
+        }
+
         try {
             Path filePath = this.uploadFileLocation.resolve(fileId).normalize();
             Resource resource = new UrlResource(filePath.toUri());
@@ -102,7 +110,7 @@ public final class FsfApiService {
         }
     }
 
-    public void uploadFile(Long userId, UploadFileRequest uploadFileRequest, MultipartFile multipartFile) {
+    public void uploadFile(String userId, UploadFileRequest uploadFileRequest, MultipartFile multipartFile) {
         log.info("uploading file with name = " + multipartFile.getName());
 
         String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
@@ -120,6 +128,7 @@ public final class FsfApiService {
             fileMetadata.setChangedOn(LocalDateTime.now());
             fileMetadata.setFileId(generatedFileId);
             fileMetadata.setOriginalFileName(fileName);
+            fileMetadata.setOwner(userRepository.findByEmail(userId));
 
             fileMetadataRepository.save(fileMetadata);
 
@@ -129,11 +138,16 @@ public final class FsfApiService {
 
     }
 
-    public void shareFile(Long userId, ShareFileRequest shareFileRequest) {
+    public void shareFile(String userId, ShareFileRequest shareFileRequest) {
         log.info("sharing file. with id = " + shareFileRequest.getFileId() + " to user " + shareFileRequest.getEmail());
+        User currentUser = userRepository.findByEmail(userId);
 
         User user = userRepository.findByEmail(shareFileRequest.getEmail());
         FileMetadata file = fileMetadataRepository.findByFileId(shareFileRequest.getFileId());
+
+        if(!file.getOwner().equals(currentUser)){
+            throw new AuthorizationServiceException("tampering_error");
+        }
 
         FilePermission filePermission = new FilePermission();
         filePermission.setAuthorizedReader(user);

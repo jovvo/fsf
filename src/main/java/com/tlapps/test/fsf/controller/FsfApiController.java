@@ -3,7 +3,6 @@ package com.tlapps.test.fsf.controller;
 
 import com.tlapps.test.fsf.model.*;
 import com.tlapps.test.fsf.service.FsfApiService;
-import com.tlapps.test.fsf.service.RegistrationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -11,6 +10,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.www.NonceExpiredException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,7 +48,7 @@ public final class FsfApiController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<FilesMetadataResponse> fetchFilesMetadata() {
-            Long userId = resolveUserId();
+            String userId = resolveUserId();
 
             List<FileMetadata> ownedFiles = fsfApiService.fetchOwnedFilesMetadata(userId);
             List<FileMetadata> sharedFiles = fsfApiService.fetchSharedFilesMetadata(userId);
@@ -72,7 +75,7 @@ public final class FsfApiController {
     @ResponseBody
     public ResponseEntity<Resource> findFile(
             @PathVariable("id") String fileId, HttpServletRequest request) {
-        Long userId = resolveUserId();
+        String userId = resolveUserId();
 
         Resource resource = fsfApiService.findFile(userId, fileId);
         String contentType = null;
@@ -106,7 +109,7 @@ public final class FsfApiController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<UploadFileResponse> uploadFile(@RequestParam("file") MultipartFile  multipartFile) {
-        Long userId = resolveUserId();
+        String userId = resolveUserId();
 
         fsfApiService.uploadFile(userId, null, multipartFile);
 
@@ -130,7 +133,7 @@ public final class FsfApiController {
     @ResponseBody
     public ResponseEntity<ShareFileResponse> shareFile(
             @RequestBody ShareFileRequest shareFileRequest) {
-        Long userId = resolveUserId();
+        String userId = resolveUserId();
 
         fsfApiService.shareFile(userId, shareFileRequest);
 
@@ -139,7 +142,12 @@ public final class FsfApiController {
         return new ResponseEntity<ShareFileResponse>(response, HttpStatus.ACCEPTED);
     }
 
-    private Long resolveUserId() {
-        return 1L;
+    private String resolveUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            String currentUserName = authentication.getName();
+            return currentUserName;
+        }
+        throw new NonceExpiredException("nonce_expired");
     }
 }

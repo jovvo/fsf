@@ -28,10 +28,9 @@ public class FileMetadata extends BaseEntity implements Serializable {
     @Column(name = "ORIGINAL_FILE_NAME")
     private String originalFileName;
 
-/*    @ManyToOne(optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "USER_ID", nullable = false)
-    private User owner;*/
-
+    private User owner;
 
 /*    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "USER_SESSION", referencedColumnName = "id")
