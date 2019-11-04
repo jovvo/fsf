@@ -1,0 +1,10 @@
+package com.tlapps.test.fsf.repository;
+
+import com.tlapps.test.fsf.model.BaseEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.NoRepositoryBean;
+
+
+@NoRepositoryBean
+public interface BaseRepository <T extends BaseEntity> extends JpaRepository<T, Long>  {
+}
