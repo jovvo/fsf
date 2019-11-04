@@ -1,0 +1,224 @@
+{
+	"info": {
+		"_postman_id": "d2993e1b-c806-4435-bfa5-dae3f0f5e5a9",
+		"name": "fsf api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "register user",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"email\": \"user2@mail.com\",\r\n        \"password\": \"pass2\"\r\n}\r\n"
+				},
+				"url": {
+					"raw": "http://localhost:8080/fsf/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"fsf",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "share file",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "pass1",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "user1@mail.com",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"email\": \"user3@mail.com\",\r\n        \"fileId\": \"0864b728-544d-457a-ac89-9b62c083e4d3\"\r\n}\r\n"
+				},
+				"url": {
+					"raw": "http://localhost:8080/fsf/api/share",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"fsf",
+						"api",
+						"share"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post file",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "pass1",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "user1@mail.com",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": ""
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/fsf/api/file",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"fsf",
+						"api",
+						"file"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "find file",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "pass3",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "user3@mail.com",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/fsf/api/file/0864b728-544d-457a-ac89-9b62c083e4d3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"fsf",
+						"api",
+						"file",
+						"0864b728-544d-457a-ac89-9b62c083e4d3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "find permissions",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "pass2",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "user2@mail.com",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/fsf/api/file",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"fsf",
+						"api",
+						"file"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
