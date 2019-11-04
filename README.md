@@ -1,5 +1,7 @@
 
-
+###### Building and running the project
+Build project with: mvn clean package 
+Inside target directory run project with: java -jar fsf-0.0.1-SNAPSHOT.jar --file.upload.directory=/tmp/file-upload-2
 
 ###### Testing database state behavior:
 In memory H2 database is configured so after application restart all data will be deleted.
