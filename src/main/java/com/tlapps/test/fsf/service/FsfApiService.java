@@ -136,7 +136,7 @@ public final class FsfApiService {
         User user = userRepository.findByEmail(shareFileRequest.getEmail());
         FileMetadata file = fileMetadataRepository.findByFileId(shareFileRequest.getFileId());
 
-        if(!file.getOwner().equals(currentUser)){
+        if(file == null || !file.getOwner().equals(currentUser)) {
             throw new AuthorizationServiceException("tampering_error");
         }
 
